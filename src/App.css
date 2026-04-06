@@ -32,6 +32,41 @@
   filter: drop-shadow(0 0 8px var(--primary-glow));
 }
 
+.sync-trigger {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.sync-trigger:hover {
+  color: var(--primary);
+  transform: scale(1.1);
+}
+
+.sync-trigger.active {
+  color: var(--primary);
+}
+
+.sync-indicator {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent-green);
+  border-radius: 50%;
+  border: 2px solid #0f172a;
+}
+
 .top-nav h1 {
   margin: 0;
   font-size: 1.5rem;
@@ -483,6 +518,7 @@
   background: rgba(255, 255, 255, 0.05);
   padding: 0.5rem 1rem;
   border-radius: 0.75rem;
+  border: 1px solid var(--border-glass);
 }
 
 .the-code {
@@ -491,6 +527,21 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   color: var(--primary);
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  transition: transform 0.2s;
+}
+
+.icon-btn:hover {
+  transform: scale(1.1);
 }
 
 .sync-hint {
@@ -625,6 +676,7 @@
   font-size: 2.5rem;
   font-weight: 800;
   background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
