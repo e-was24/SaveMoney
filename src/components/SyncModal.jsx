@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Share2, Copy, Check, X, Smartphone } from 'lucide-react';
+import { Users, Copy, Check, X, Smartphone } from 'lucide-react';
 
 const SyncModal = ({ isOpen, onClose, syncCode, onUpdateSyncCode }) => {
   const [inputCode, setInputCode] = useState('');
@@ -30,7 +30,7 @@ const SyncModal = ({ isOpen, onClose, syncCode, onUpdateSyncCode }) => {
       <div className="modal-content glass">
         <div className="modal-header">
           <div className="header-with-icon">
-            <Share2 size={24} className="text-primary" />
+            <Users size={24} className="text-primary" />
             <h3>Tautkan Perangkat</h3>
           </div>
           <button className="close-btn" onClick={onClose}><X size={20} /></button>

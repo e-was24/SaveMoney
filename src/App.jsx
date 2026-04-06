@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import SavingsForm from './components/SavingsForm';
 import SyncModal from './components/SyncModal';
-import { Share2 } from 'lucide-react';
+import LoadingScreen from './components/LoadingScreen';
+import { Users } from 'lucide-react';
 import { migrateLocalToRemote } from './lib/storage';
 import './App.css';
 
@@ -11,6 +12,12 @@ function App() {
   const [isSyncOpen, setIsSyncOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [syncCode, setSyncCode] = useState(localStorage.getItem('sync_code') || '');
+  const [isLoading, setIsLoading] = useState(!sessionStorage.getItem('has_loaded'));
+
+  const handleLoadingFinished = () => {
+    sessionStorage.setItem('has_loaded', 'true');
+    setIsLoading(false);
+  };
 
   const handleSaved = () => {
     setRefreshKey(prev => prev + 1);
@@ -42,7 +49,7 @@ function App() {
           className={`sync-trigger ${syncCode ? 'active' : ''}`} 
           onClick={() => setIsSyncOpen(true)}
         >
-          <Share2 size={20} />
+          <Users size={20} />
           {syncCode && <span className="sync-indicator"></span>}
         </button>
       </nav>
@@ -69,6 +76,8 @@ function App() {
         syncCode={syncCode}
         onUpdateSyncCode={handleUpdateSyncCode}
       />
+
+      {isLoading && <LoadingScreen onFinished={handleLoadingFinished} />}
     </div>
   );
 }
