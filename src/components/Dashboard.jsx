@@ -16,7 +16,7 @@ const Dashboard = ({ onAddClick, onDelete }) => {
   }, []);
 
   const totalIncome = savings
-    .filter(s => s.type === 'income')
+    .filter(s => !s.type || s.type === 'income')
     .reduce((acc, curr) => acc + Number(curr.amount), 0);
   
   const totalExpense = savings
@@ -84,7 +84,7 @@ const Dashboard = ({ onAddClick, onDelete }) => {
       {/* Main Balance Card */}
       <div className="stat-card balance glass">
         <div className="stat-info">
-          <span className="stat-label">Saldo Saat Ini</span>
+          <span className="stat-label">Tabungan Saat Ini</span>
           <h2 className="stat-value">{formatCurrency(balance)}</h2>
         </div>
         <div className="stat-icon bg-primary shadow-glow">
@@ -95,11 +95,11 @@ const Dashboard = ({ onAddClick, onDelete }) => {
       {/* Grid for Income & Expense */}
       <div className="stats-grid">
         <div className="mini-stat-card glass">
-          <span className="mini-label">Pemasukan</span>
+          <span className="mini-label">Masuk</span>
           <span className="mini-value text-income">+{formatCurrency(totalIncome)}</span>
         </div>
         <div className="mini-stat-card glass">
-          <span className="mini-label">Pengeluaran</span>
+          <span className="mini-label">Keluar</span>
           <span className="mini-value text-expense">-{formatCurrency(totalExpense)}</span>
         </div>
       </div>
