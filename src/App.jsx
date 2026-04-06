@@ -14,7 +14,8 @@ function App() {
   return (
     <div className="app-shell">
       <nav className="top-nav">
-        <h1 className="glass-title">SaveMoney</h1>
+        <img src="/logo.png" alt="Logo" className="nav-logo" />
+        <h1 className="glass-title">E-Money</h1>
       </nav>
       
       <main className="content">

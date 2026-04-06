@@ -4,6 +4,7 @@ import { saveSaving } from '../lib/storage';
 
 const SavingsForm = ({ isOpen, onClose, onSaved }) => {
   const [amount, setAmount] = useState('');
+  const [type, setType] = useState('income'); // 'income' or 'expense'
   const [note, setNote] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
@@ -13,12 +14,14 @@ const SavingsForm = ({ isOpen, onClose, onSaved }) => {
 
     saveSaving({
       amount: parseFloat(amount),
+      type,
       note,
       date: new Date(date).toISOString(),
     });
 
     setAmount('');
     setNote('');
+    setType('income');
     onSaved();
     onClose();
   };
@@ -33,6 +36,18 @@ const SavingsForm = ({ isOpen, onClose, onSaved }) => {
           <button onClick={onClose} className="close-btn"><X size={20} /></button>
         </div>
         <form onSubmit={handleSubmit} className="saving-form">
+          <div className="type-toggle-container glass">
+            <button 
+              type="button" 
+              className={`type-btn ${type === 'income' ? 'active income' : ''}`}
+              onClick={() => setType('income')}
+            >Masuk</button>
+            <button 
+              type="button" 
+              className={`type-btn ${type === 'expense' ? 'active expense' : ''}`}
+              onClick={() => setType('expense')}
+            >Keluar</button>
+          </div>
           <div className="form-group">
             <label>Jumlah (IDR)</label>
             <input 

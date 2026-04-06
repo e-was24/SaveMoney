@@ -15,7 +15,15 @@ const Dashboard = ({ onAddClick, onDelete }) => {
     setSavings(getSavings());
   }, []);
 
-  const totalSavings = savings.reduce((acc, curr) => acc + Number(curr.amount), 0);
+  const totalIncome = savings
+    .filter(s => s.type === 'income')
+    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+  
+  const totalExpense = savings
+    .filter(s => s.type === 'expense')
+    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+  
+  const balance = totalIncome - totalExpense;
 
   const handleDelete = (id) => {
     if (window.confirm('Hapus data ini?')) {
@@ -73,14 +81,26 @@ const Dashboard = ({ onAddClick, onDelete }) => {
 
   return (
     <div className="dashboard-container">
-      {/* Header Stat Card */}
-      <div className="stat-card glass">
+      {/* Main Balance Card */}
+      <div className="stat-card balance glass">
         <div className="stat-info">
-          <span className="stat-label">Total Tabungan</span>
-          <h2 className="stat-value">{formatCurrency(totalSavings)}</h2>
+          <span className="stat-label">Saldo Saat Ini</span>
+          <h2 className="stat-value">{formatCurrency(balance)}</h2>
         </div>
-        <div className="stat-icon bg-primary">
-          <Wallet size={24} />
+        <div className="stat-icon bg-primary shadow-glow">
+          <Wallet size={24} color="white" />
+        </div>
+      </div>
+
+      {/* Grid for Income & Expense */}
+      <div className="stats-grid">
+        <div className="mini-stat-card glass">
+          <span className="mini-label">Pemasukan</span>
+          <span className="mini-value text-income">+{formatCurrency(totalIncome)}</span>
+        </div>
+        <div className="mini-stat-card glass">
+          <span className="mini-label">Pengeluaran</span>
+          <span className="mini-value text-expense">-{formatCurrency(totalExpense)}</span>
         </div>
       </div>
 
@@ -148,14 +168,16 @@ const Dashboard = ({ onAddClick, onDelete }) => {
         <div className="history-list">
           {savings.slice(-5).reverse().map((item) => (
             <div key={item.id} className="history-item glass">
-              <div className="history-icon bg-blue">
+              <div className={`history-icon ${item.type === 'expense' ? 'bg-red' : 'bg-blue'}`}>
                 <Calendar size={18} />
               </div>
               <div className="history-meta">
                 <span className="history-date">{formatDate(item.date)}</span>
-                <span className="history-note">{item.note || 'Tabungan'}</span>
+                <span className="history-note">{item.note || (item.type === 'expense' ? 'Pengeluaran' : 'Tabungan')}</span>
               </div>
-              <span className="history-amount">{formatCurrency(item.amount)}</span>
+              <span className={`history-amount ${item.type === 'expense' ? 'text-expense' : 'text-income'}`}>
+                {item.type === 'expense' ? '-' : '+'}{formatCurrency(item.amount)}
+              </span>
               <button 
                 className="delete-btn" 
                 onClick={(e) => {

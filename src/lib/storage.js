@@ -8,6 +8,7 @@ export const saveSaving = (record) => {
   const newRecord = {
     id: Date.now().toString(),
     ...record,
+    type: record.type || 'income', // Default to income for compatibility
     date: record.date || new Date().toISOString(),
   };
   localStorage.setItem('savings_records', JSON.stringify([...records, newRecord]));
