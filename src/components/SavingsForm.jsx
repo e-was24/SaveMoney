@@ -2,28 +2,32 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { saveSaving } from '../lib/storage';
 
-const SavingsForm = ({ isOpen, onClose, onSaved }) => {
+const SavingsForm = ({ isOpen, onClose, onSaved, syncCode }) => {
   const [amount, setAmount] = useState('');
   const [type, setType] = useState('income'); // 'income' or 'expense'
   const [note, setNote] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!amount) return;
 
-    saveSaving({
-      amount: parseFloat(amount),
-      type,
-      note,
-      date: new Date(date).toISOString(),
-    });
+    try {
+      await saveSaving({
+        amount: parseFloat(amount),
+        type,
+        note,
+        date: new Date(date).toISOString(),
+      }, syncCode);
 
-    setAmount('');
-    setNote('');
-    setType('income');
-    onSaved();
-    onClose();
+      setAmount('');
+      setNote('');
+      setType('income');
+      onSaved();
+      onClose();
+    } catch (err) {
+      alert(err.message || 'Gagal menyimpan data.');
+    }
   };
 
   if (!isOpen) return null;

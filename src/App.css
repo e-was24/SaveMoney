@@ -8,22 +8,28 @@
 }
 
 .top-nav {
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
   position: sticky;
   top: 0;
-  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
   background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-glass);
+  z-index: 50;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .nav-logo {
   height: 2rem;
   width: auto;
-  border-radius: 0.5rem;
+  filter: drop-shadow(0 0 8px var(--primary-glow));
 }
 
 .top-nav h1 {
@@ -440,6 +446,130 @@
 
 .shadow-lg {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Sync Modal */
+.header-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sync-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.active-sync-card {
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--primary);
+}
+
+.sync-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.code-display {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+}
+
+.the-code {
+  font-family: monospace;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--primary);
+}
+
+.sync-hint {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.text-btn.danger { color: #f87171; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.divider span { padding: 0 1rem; }
+
+.submit-btn.outline {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  box-shadow: none;
+}
+
+.sync-note {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-style: italic;
+}
+
+.input-with-btn {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.submit-btn.mini {
+  padding: 0.5rem 1rem;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.device-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 1rem;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.device-limit-msg {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
 @media (min-width: 480px) {

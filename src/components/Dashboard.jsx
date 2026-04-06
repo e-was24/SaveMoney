@@ -3,18 +3,43 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell 
 } from 'recharts';
 import { TrendingUp, Wallet, Calendar, Plus, Trash2, ChevronRight, Eye, EyeOff } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 import { getSavings, saveSaving, deleteSaving } from '../lib/storage';
 import { formatCurrency, formatDate } from '../lib/formatters';
 import { startOfWeek, endOfWeek, subWeeks, format, startOfMonth, subMonths, startOfYear, subYears, isWithinInterval, isSameWeek } from 'date-fns';
 
-const Dashboard = ({ onAddClick, onDelete }) => {
+const Dashboard = ({ onAddClick, onDelete, syncCode }) => {
   const [savings, setSavings] = useState([]);
   const [filter, setFilter] = useState('weekly'); // weekly, monthly, yearly
   const [isBalanceHidden, setIsBalanceHidden] = useState(false);
 
+  const fetchData = async () => {
+    const data = await getSavings(syncCode);
+    setSavings(data);
+  };
+
   useEffect(() => {
-    setSavings(getSavings());
-  }, []);
+    fetchData();
+
+    // Real-time listener
+    if (syncCode) {
+      const subscription = supabase
+        .channel('savings-changes')
+        .on('postgres_changes', { 
+          event: '*', 
+          schema: 'public', 
+          table: 'savings',
+          filter: `sync_code=eq.${syncCode}`
+        }, () => {
+          fetchData();
+        })
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(subscription);
+      };
+    }
+  }, [syncCode]);
 
   const totalIncome = savings
     .filter(s => !s.type || s.type === 'income')
@@ -35,10 +60,10 @@ const Dashboard = ({ onAddClick, onDelete }) => {
     .filter(s => s.type === 'expense' && isSameWeek(new Date(s.date), new Date()))
     .reduce((acc, curr) => acc + Number(curr.amount), 0);
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Hapus data ini?')) {
-      deleteSaving(id);
-      setSavings(getSavings());
+      await deleteSaving(id, syncCode);
+      fetchData();
       if (onDelete) onDelete();
     }
   };
