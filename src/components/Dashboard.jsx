@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { 
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell 
 } from 'recharts';
-import { TrendingUp, Wallet, Calendar, Plus, Trash2, ChevronRight } from 'lucide-react';
+import { TrendingUp, Wallet, Calendar, Plus, Trash2, ChevronRight, Eye, EyeOff } from 'lucide-react';
 import { getSavings, saveSaving, deleteSaving } from '../lib/storage';
 import { formatCurrency, formatDate } from '../lib/formatters';
-import { startOfWeek, endOfWeek, subWeeks, format, startOfMonth, subMonths, startOfYear, subYears, isWithinInterval } from 'date-fns';
+import { startOfWeek, endOfWeek, subWeeks, format, startOfMonth, subMonths, startOfYear, subYears, isWithinInterval, isSameWeek } from 'date-fns';
 
 const Dashboard = ({ onAddClick, onDelete }) => {
   const [savings, setSavings] = useState([]);
   const [filter, setFilter] = useState('weekly'); // weekly, monthly, yearly
+  const [isBalanceHidden, setIsBalanceHidden] = useState(false);
 
   useEffect(() => {
     setSavings(getSavings());
@@ -24,6 +25,15 @@ const Dashboard = ({ onAddClick, onDelete }) => {
     .reduce((acc, curr) => acc + Number(curr.amount), 0);
   
   const balance = totalIncome - totalExpense;
+
+  // Weekly metrics for summary cards
+  const weeklyIncome = savings
+    .filter(s => (!s.type || s.type === 'income') && isSameWeek(new Date(s.date), new Date()))
+    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+  const weeklyExpense = savings
+    .filter(s => s.type === 'expense' && isSameWeek(new Date(s.date), new Date()))
+    .reduce((acc, curr) => acc + Number(curr.amount), 0);
 
   const handleDelete = (id) => {
     if (window.confirm('Hapus data ini?')) {
@@ -84,23 +94,33 @@ const Dashboard = ({ onAddClick, onDelete }) => {
       {/* Main Balance Card */}
       <div className="stat-card balance glass">
         <div className="stat-info">
-          <span className="stat-label">Tabungan Saat Ini</span>
-          <h2 className="stat-value">{formatCurrency(balance)}</h2>
+          <div className="label-with-toggle">
+            <span className="stat-label">Tabungan Saat Ini</span>
+            <button 
+              className="privacy-toggle" 
+              onClick={() => setIsBalanceHidden(!isBalanceHidden)}
+            >
+              {isBalanceHidden ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+          <h2 className="stat-value">
+            {isBalanceHidden ? '••••••••' : formatCurrency(balance)}
+          </h2>
         </div>
         <div className="stat-icon bg-primary shadow-glow">
           <Wallet size={24} color="white" />
         </div>
       </div>
 
-      {/* Grid for Income & Expense */}
+      {/* Grid for Income & Expense (Weekly Focus) */}
       <div className="stats-grid">
         <div className="mini-stat-card glass">
-          <span className="mini-label">Masuk</span>
-          <span className="mini-value text-income">+{formatCurrency(totalIncome)}</span>
+          <span className="mini-label">Masuk (Minggu Ini)</span>
+          <span className="mini-value text-income">+{formatCurrency(weeklyIncome)}</span>
         </div>
         <div className="mini-stat-card glass">
-          <span className="mini-label">Keluar</span>
-          <span className="mini-value text-expense">-{formatCurrency(totalExpense)}</span>
+          <span className="mini-label">Keluar (Minggu Ini)</span>
+          <span className="mini-value text-expense">-{formatCurrency(weeklyExpense)}</span>
         </div>
       </div>
 

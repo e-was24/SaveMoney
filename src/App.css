@@ -80,6 +80,30 @@
   border: 1px solid rgba(99, 102, 241, 0.3);
 }
 
+.label-with-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.privacy-toggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.privacy-toggle:hover {
+  opacity: 1;
+}
+
 .shadow-glow {
   box-shadow: 0 0 20px var(--primary-glow);
 }
