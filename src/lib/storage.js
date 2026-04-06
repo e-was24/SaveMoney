@@ -74,3 +74,19 @@ export const deleteSaving = async (id, syncCode = '') => {
   const records = JSON.parse(localStorage.getItem('savings_records') || '[]');
   localStorage.setItem('savings_records', JSON.stringify(records.filter(r => r.id !== id)));
 };
+
+export const migrateLocalToRemote = async (syncCode) => {
+  if (!syncCode) return;
+  
+  const localRecords = JSON.parse(localStorage.getItem('savings_records') || '[]');
+  if (localRecords.length === 0) return;
+
+  // Push each record to Supabase
+  const recordsToSync = localRecords.map(r => ({ ...r, sync_code: syncCode }));
+  
+  const { error } = await supabase
+    .from('savings')
+    .upsert(recordsToSync, { onConflict: 'id' });
+  
+  if (error) throw error;
+};

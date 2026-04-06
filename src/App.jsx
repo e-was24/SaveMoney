@@ -3,6 +3,7 @@ import Dashboard from './components/Dashboard';
 import SavingsForm from './components/SavingsForm';
 import SyncModal from './components/SyncModal';
 import { Share2 } from 'lucide-react';
+import { migrateLocalToRemote } from './lib/storage';
 import './App.css';
 
 function App() {
@@ -15,14 +16,19 @@ function App() {
     setRefreshKey(prev => prev + 1);
   };
 
-  const handleUpdateSyncCode = (code) => {
-    setSyncCode(code);
-    if (code) {
-      localStorage.setItem('sync_code', code);
-    } else {
-      localStorage.removeItem('sync_code');
+  const handleUpdateSyncCode = async (code) => {
+    try {
+      if (code) {
+        await migrateLocalToRemote(code);
+        localStorage.setItem('sync_code', code);
+      } else {
+        localStorage.removeItem('sync_code');
+      }
+      setSyncCode(code);
+      setRefreshKey(prev => prev + 1);
+    } catch (err) {
+      alert('Gagal menyinkronkan data: ' + err.message);
     }
-    setRefreshKey(prev => prev + 1);
   };
 
   return (
