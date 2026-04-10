@@ -42,7 +42,7 @@ function App() {
     <div className="app-shell">
       <nav className="top-nav">
         <div className="nav-left">
-          <img src="/logo.png" alt="Logo" className="nav-logo" />
+          <img src="logo.png" alt="Logo" className="nav-logo" />
           <h1 className="glass-title">E-Money</h1>
         </div>
         <button 
