@@ -1,5 +1,16 @@
 import { supabase } from './supabase';
 
+const generateId = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 const getDeviceId = () => {
   let id = localStorage.getItem('device_id');
   if (!id) {
@@ -27,7 +38,7 @@ export const getSavings = async (syncCode = '') => {
 export const saveSaving = async (record, syncCode = '') => {
   const deviceId = getDeviceId();
   const newRecord = {
-    id: crypto.randomUUID(),
+    id: generateId(),
     ...record,
     type: record.type || 'income',
     date: record.date || new Date().toISOString(),
@@ -92,7 +103,7 @@ export const migrateLocalToRemote = async (syncCode) => {
   const recordsToSync = localRecords.map(r => {
     let newId = r.id;
     if (!isUUID(r.id)) {
-      newId = crypto.randomUUID();
+      newId = generateId();
       updatedLocal = true;
     }
     return { ...r, id: newId, sync_code: syncCode };
