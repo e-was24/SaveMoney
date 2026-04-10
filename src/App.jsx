@@ -78,6 +78,8 @@ function App() {
       />
 
       {isLoading && <LoadingScreen onFinished={handleLoadingFinished} />}
+      
+      <div className="app-version">v4.0.0</div>
     </div>
   );
 }

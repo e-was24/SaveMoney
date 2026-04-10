@@ -737,3 +737,17 @@
     border-radius: 2rem;
   }
 }
+
+.app-version {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 30;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
