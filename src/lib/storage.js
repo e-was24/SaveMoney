@@ -27,7 +27,7 @@ export const getSavings = async (syncCode = '') => {
 export const saveSaving = async (record, syncCode = '') => {
   const deviceId = getDeviceId();
   const newRecord = {
-    id: Date.now().toString(),
+    id: crypto.randomUUID(),
     ...record,
     type: record.type || 'income',
     date: record.date || new Date().toISOString(),
@@ -88,5 +88,8 @@ export const migrateLocalToRemote = async (syncCode) => {
     .from('savings')
     .upsert(recordsToSync, { onConflict: 'id' });
   
-  if (error) throw error;
+  if (error) {
+    console.error('Migration error:', error);
+    throw new Error('Gagal mengunggah data lokal ke cloud: ' + error.message);
+  }
 };

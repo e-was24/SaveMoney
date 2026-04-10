@@ -34,7 +34,7 @@ function App() {
       setSyncCode(code);
       setRefreshKey(prev => prev + 1);
     } catch (err) {
-      alert('Gagal menyinkronkan data: ' + err.message);
+      alert('Gagal menyinkronkan data: ' + err.message + '\n\nPastikan koneksi internet stabil atau coba gunakan kode baru.');
     }
   };
 
