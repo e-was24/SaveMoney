@@ -78,18 +78,50 @@ export const deleteSaving = async (id, syncCode = '') => {
 export const migrateLocalToRemote = async (syncCode) => {
   if (!syncCode) return;
   
-  const localRecords = JSON.parse(localStorage.getItem('savings_records') || '[]');
-  if (localRecords.length === 0) return;
+  let localRecords = JSON.parse(localStorage.getItem('savings_records') || '[]');
+  
+  const isUUID = (str) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
-  // Push each record to Supabase
-  const recordsToSync = localRecords.map(r => ({ ...r, sync_code: syncCode }));
+  // Ensure all records have valid UUIDs for Supabase compatibility
+  let updatedLocal = false;
+  const recordsToSync = localRecords.map(r => {
+    let newId = r.id;
+    if (!isUUID(r.id)) {
+      newId = crypto.randomUUID();
+      updatedLocal = true;
+    }
+    return { ...r, id: newId, sync_code: syncCode };
+  });
+
+  // If IDs were upgraded to UUID, sync back to localStorage
+  if (updatedLocal) {
+    const recordsForLocal = recordsToSync.map(({ sync_code, ...r }) => r);
+    localStorage.setItem('savings_records', JSON.stringify(recordsForLocal));
+  }
+
+  // Register device to this sync code before uploading data
+  const deviceId = getDeviceId();
+  const { data: devices } = await supabase
+    .from('devices')
+    .select('device_id')
+    .eq('sync_code', syncCode);
   
-  const { error } = await supabase
-    .from('savings')
-    .upsert(recordsToSync, { onConflict: 'id' });
-  
-  if (error) {
-    console.error('Migration error:', error);
-    throw new Error('Gagal mengunggah data lokal ke cloud: ' + error.message);
+  const deviceIds = devices?.map(d => d.device_id) || [];
+  if (!deviceIds.includes(deviceId)) {
+    const { error: regError } = await supabase
+      .from('devices')
+      .insert({ sync_code: syncCode, device_id: deviceId });
+    if (regError) console.warn('Device registration warning:', regError);
+  }
+
+  if (recordsToSync.length > 0) {
+    const { error } = await supabase
+      .from('savings')
+      .upsert(recordsToSync, { onConflict: 'id' });
+    
+    if (error) {
+      console.error('Migration error:', error);
+      throw new Error('Gagal mengunggah data ke cloud: ' + error.message);
+    }
   }
 };
