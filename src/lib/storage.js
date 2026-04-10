@@ -78,6 +78,11 @@ export const deleteSaving = async (id, syncCode = '') => {
 export const migrateLocalToRemote = async (syncCode) => {
   if (!syncCode) return;
   
+  // Diagnostic check
+  if (!supabase.supabaseUrl || supabase.supabaseUrl.includes('placeholder')) {
+    throw new Error('Konfigurasi Supabase tidak valid. Pastikan file .env sudah benar.');
+  }
+
   let localRecords = JSON.parse(localStorage.getItem('savings_records') || '[]');
   
   const isUUID = (str) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
